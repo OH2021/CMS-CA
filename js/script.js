@@ -1,48 +1,58 @@
-fetch('https://fl-power.no/exam/wp-json/wc/v3/products?consumer_key=ck_3ff46144f22e06ae275285802b5b282129a841f2&consumer_secret=cs_ae3ebd41e2a7ef6caba586991663ac0e05bf6c2a')
-    .then(response => response.json())
-    .then(products => {
-        const productContainer = document.querySelector('.product-list');
-        products.forEach(product => {
-            const productItem = document.createElement('div');
-            productItem.classList.add('product-item');
-            productItem.setAttribute('data-product-id', product.id);
+document.addEventListener('DOMContentLoaded', function () {
+    // Fetch product list only on the index.html page
+    if (window.location.pathname === '/index.html') {
+        fetch('https://fl-power.no/exam/wp-json/wc/v3/products?consumer_key=ck_3ff46144f22e06ae275285802b5b282129a841f2&consumer_secret=cs_ae3ebd41e2a7ef6caba586991663ac0e05bf6c2a')
+            .then(response => response.json())
+            .then(products => {
+                const productContainer = document.querySelector('.product-list');
 
-            const h2 = document.createElement('h2');
-            h2.textContent = product.name;
+                if (productContainer) {
+                    products.forEach(product => {
+                        const productItem = document.createElement('div');
+                        productItem.classList.add('product-item');
+                        productItem.setAttribute('data-product-id', product.id);
 
-            const p = document.createElement('p');
-            p.textContent = product.description;
+                        const h2 = document.createElement('h2');
+                        h2.textContent = product.name;
 
-            const span = document.createElement('span');
-            span.textContent = `$${product.price}`;
+                        const p = document.createElement('p');
+                        p.textContent = product.description;
 
-            const a = document.createElement('a');
-            a.href = `single-product.html?id=${product.id}&name=${encodeURIComponent(product.name)}&price=${product.price}`;
-            a.classList.add('view-details-btn');
-            a.textContent = 'View Details';
+                        const span = document.createElement('span');
+                        span.textContent = `$${product.price}`;
 
-            productItem.appendChild(h2);
-            productItem.appendChild(span);
-            productItem.appendChild(a);
+                        const a = document.createElement('a');
+                        a.href = `single-product.html?id=${product.id}&name=${encodeURIComponent(product.name)}&price=${product.price}`;
+                        a.classList.add('view-details-btn');
+                        a.textContent = 'View Details';
 
-            productContainer.appendChild(productItem);
-        });
-    })
-    .catch(error => console.error('Error fetching data:', error));
+                        productItem.appendChild(h2);
+                        productItem.appendChild(span);
+                        productItem.appendChild(a);
 
-    window.onload = function () {
+                        productContainer.appendChild(productItem);
+                    });
+                } else {
+                    console.error('Error: Product container element not found.');
+                }
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    }
+    
+    // Display individual product details on the single-product.html page
+    if (window.location.pathname === '/single-product.html') {
         const url = new URL(window.location.href);
         const productId = url.searchParams.get('id');
-    
+
         console.log('Product ID from URL:', productId);
-    
+
         if (productId) {
             const updateProductDetails = (product) => {
                 console.log('Updating product details:', product);
-    
+
                 const productNameElement = document.getElementById('productName');
                 const productPriceElement = document.getElementById('productPrice');
-    
+
                 if (productNameElement && productPriceElement) {
                     productNameElement.textContent = product.name;
                     productPriceElement.textContent = `$${product.price}`;
@@ -50,7 +60,7 @@ fetch('https://fl-power.no/exam/wp-json/wc/v3/products?consumer_key=ck_3ff46144f
                     console.error('Error: Product details elements not found.');
                 }
             };
-    
+
             fetch(`https://fl-power.no/exam/wp-json/wc/v3/products/${productId}?consumer_key=ck_3ff46144f22e06ae275285802b5b282129a841f2&consumer_secret=cs_ae3ebd41e2a7ef6caba586991663ac0e05bf6c2a`)
                 .then(response => {
                     if (!response.ok) {
@@ -65,4 +75,5 @@ fetch('https://fl-power.no/exam/wp-json/wc/v3/products?consumer_key=ck_3ff46144f
         } else {
             console.error('Error: Product ID not found in the URL.');
         }
-    };
+    }
+});
