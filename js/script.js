@@ -1,79 +1,75 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // Fetch product list only on the index.html page
-    if (window.location.pathname === '/index.html') {
-        fetch('https://fl-power.no/exam/wp-json/wc/v3/products?consumer_key=ck_3ff46144f22e06ae275285802b5b282129a841f2&consumer_secret=cs_ae3ebd41e2a7ef6caba586991663ac0e05bf6c2a')
-            .then(response => response.json())
-            .then(products => {
-                const productContainer = document.querySelector('.product-list');
+    const url = new URL(window.location.href);
+    const productId = url.searchParams.get('id');
 
-                if (productContainer) {
-                    products.forEach(product => {
-                        const productItem = document.createElement('div');
-                        productItem.classList.add('product-item');
-                        productItem.setAttribute('data-product-id', product.id);
+    console.log('Product ID from URL:', productId);
 
-                        const h2 = document.createElement('h2');
-                        h2.textContent = product.name;
+    if (productId) {
+        const updateProductDetails = (product) => {
+            console.log('Updating product details:', product);
 
-                        const p = document.createElement('p');
-                        p.textContent = product.description;
+            const productNameElement = document.getElementById('productName');
+            const productPriceElement = document.getElementById('productPrice');
 
-                        const span = document.createElement('span');
-                        span.textContent = `$${product.price}`;
+            if (productNameElement && productPriceElement) {
+                productNameElement.textContent = product.name;
+                productPriceElement.textContent = `$${product.price}`;
+            } else {
+                console.error('Error: Product details elements not found.');
+            }
+        };
 
-                        const a = document.createElement('a');
-                        a.href = `single-product.html?id=${product.id}&name=${encodeURIComponent(product.name)}&price=${product.price}`;
-                        a.classList.add('view-details-btn');
-                        a.textContent = 'View Details';
-
-                        productItem.appendChild(h2);
-                        productItem.appendChild(span);
-                        productItem.appendChild(a);
-
-                        productContainer.appendChild(productItem);
-                    });
-                } else {
-                    console.error('Error: Product container element not found.');
+        fetch(`https://fl-power.no/exam/wp-json/wc/v3/products/${productId}?consumer_key=ck_3ff46144f22e06ae275285802b5b282129a841f2&consumer_secret=cs_ae3ebd41e2a7ef6caba586991663ac0e05bf6c2a`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Product not found');
                 }
+                return response.json();
             })
-            .catch(error => console.error('Error fetching data:', error));
+            .then(product => {
+                updateProductDetails(product);
+            })
+            .catch(error => console.error('Error fetching product details:', error));
+    } else {
+        console.error('Error: Product ID not found in the URL.');
+
+        // Add any additional logic for handling the absence of a product ID if needed
     }
-    
-    // Display individual product details on the single-product.html page
-    if (window.location.pathname === '/single-product.html') {
-        const url = new URL(window.location.href);
-        const productId = url.searchParams.get('id');
 
-        console.log('Product ID from URL:', productId);
+    fetch('https://fl-power.no/exam/wp-json/wc/v3/products?consumer_key=ck_3ff46144f22e06ae275285802b5b282129a841f2&consumer_secret=cs_ae3ebd41e2a7ef6caba586991663ac0e05bf6c2a')
+        .then(response => response.json())
+        .then(products => {
+            const productContainer = document.querySelector('.product-list');
 
-        if (productId) {
-            const updateProductDetails = (product) => {
-                console.log('Updating product details:', product);
+            if (productContainer) {
+                products.forEach(product => {
+                    const productItem = document.createElement('div');
+                    productItem.classList.add('product-item');
+                    productItem.setAttribute('data-product-id', product.id);
 
-                const productNameElement = document.getElementById('productName');
-                const productPriceElement = document.getElementById('productPrice');
+                    const h2 = document.createElement('h2');
+                    h2.textContent = product.name;
 
-                if (productNameElement && productPriceElement) {
-                    productNameElement.textContent = product.name;
-                    productPriceElement.textContent = `$${product.price}`;
-                } else {
-                    console.error('Error: Product details elements not found.');
-                }
-            };
+                    const p = document.createElement('p');
+                    p.textContent = product.description;
 
-            fetch(`https://fl-power.no/exam/wp-json/wc/v3/products/${productId}?consumer_key=ck_3ff46144f22e06ae275285802b5b282129a841f2&consumer_secret=cs_ae3ebd41e2a7ef6caba586991663ac0e05bf6c2a`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Product not found');
-                    }
-                    return response.json();
-                })
-                .then(product => {
-                    updateProductDetails(product);
-                })
-                .catch(error => console.error('Error fetching product details:', error));
-        } else {
-            console.error('Error: Product ID not found in the URL.');
-        }
-    }
+                    const span = document.createElement('span');
+                    span.textContent = `$${product.price}`;
+
+                    const a = document.createElement('a');
+                    a.href = `single-product.html?id=${product.id}&name=${encodeURIComponent(product.name)}&price=${product.price}`;
+                    a.classList.add('view-details-btn');
+                    a.textContent = 'View Details';
+
+                    productItem.appendChild(h2);
+                    productItem.appendChild(span);
+                    productItem.appendChild(a);
+
+                    productContainer.appendChild(productItem);
+                });
+            } else {
+                console.error('Error: Product container element not found.');
+            }
+        })
+        .catch(error => console.error('Error fetching data:', error));
 });
