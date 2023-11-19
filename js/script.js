@@ -18,7 +18,7 @@ window.onload = function () {
                     productNameElement.textContent = product.name;
                     productPriceElement.textContent = `$${product.price}`;
                 } else {
-                    console.error('Error');
+                    console.error('Error: Product details elements not found.');
                 }
             };
 
@@ -32,9 +32,9 @@ window.onload = function () {
                 .then(product => {
                     updateProductDetails(product);
                 })
-                .catch(error => console.error('Error', error));
+                .catch(error => console.error('Error fetching product details:', error));
         } else {
-            console.error('Error');
+            console.error('Error: Product ID not found in the URL.');
         }
     } else if (window.location.pathname === '/index.html') {
         fetch('https://fl-power.no/exam/wp-json/wc/v3/products?consumer_key=ck_3ff46144f22e06ae275285802b5b282129a841f2&consumer_secret=cs_ae3ebd41e2a7ef6caba586991663ac0e05bf6c2a')
