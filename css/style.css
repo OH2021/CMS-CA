@@ -30,12 +30,6 @@ header, footer {
     box-sizing: border-box;
 }
 
-.product-item img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
-}
-
 h2 {
     color: #333;
 }
