@@ -1,6 +1,6 @@
 # Your project title
 
-![image](https://user-images.githubusercontent.com/52622303/164316813-4b12d99f-aeb7-4069-85cf-e72b3a50ac99.png)
+![CMS-CA](https://github.com/OH2021/CMS-CA/assets/77490624/f77815ef-3e2d-4297-b921-60926f4e1b7d)
 
 A simple overview of the use/purpose of the project.
 
